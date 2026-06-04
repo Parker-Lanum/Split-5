@@ -7,9 +7,8 @@ using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
     public Rigidbody2D playerBody;
-    public int speed = 5;
-    public int jump = 5;
-    public Scene scene;
+    public int speed = 3;
+    public int jumpHeight = 15;
     void Start()
     {
         
@@ -25,6 +24,7 @@ public class PlayerController : MonoBehaviour
     {
         var keyboard = Keyboard.current;
         int moveDirection = 0;
+        int jump = 0;
         if (keyboard.aKey.isPressed)
         {
             moveDirection -= 1; 
@@ -33,13 +33,11 @@ public class PlayerController : MonoBehaviour
         {
             moveDirection += 1; 
         }
-
-        playerBody.linearVelocity = new Vector2(speed*moveDirection, playerBody.linearVelocity.y);
-
         if (keyboard.wKey.isPressed && playerBody.linearVelocity.y == 0)
         {
-            playerBody.AddForce(new Vector2(0,10));
+            jump = 1;
         }
+        playerBody.linearVelocity = new Vector2(speed*moveDirection, (jump*jumpHeight)+playerBody.linearVelocity.y);
         if (keyboard.rKey.isPressed)
         {
             SceneManager.LoadScene("SampleScene");
