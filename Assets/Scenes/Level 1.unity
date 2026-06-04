@@ -339,6 +339,10 @@ PrefabInstance:
       propertyPath: jumpHeight
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 7091679295835435108, guid: a8aa64a1d31dba648aa8959ec761ebeb, type: 3}
+      propertyPath: m_Constraints
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 7865010736930498974, guid: a8aa64a1d31dba648aa8959ec761ebeb, type: 3}
       propertyPath: m_Name
       value: Level
