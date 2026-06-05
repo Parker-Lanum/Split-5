@@ -55,7 +55,6 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private bool isCrouched;
 
-    private bool wasWalking = false;*/
     void Start()
     {
         
@@ -260,7 +259,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void OnStateChanged(PlayerState oldState, PlayerState newState)
+    void HandleFootstepAudio(PlayerState oldState, PlayerState newState)
     {
         bool shouldPlayFootstep =
             isGrounded &&
