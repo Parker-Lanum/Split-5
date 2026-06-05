@@ -5,7 +5,8 @@ public class SoundManager : MonoBehaviour
     public static SoundManager Instance { get; private set; }
 
     [Header("Audio Sources (auto-created if left empty)")]
-    public AudioSource musicSource;
+    public AudioSource warningSource;
+    public AudioSource pianoSource;
     public AudioSource sfxSource;
     public AudioSource loopSource;
 
@@ -19,9 +20,10 @@ public class SoundManager : MonoBehaviour
 
         Instance = this;
 
-        musicSource = EnsureSource(musicSource);
-        sfxSource   = EnsureSource(sfxSource);
-        loopSource  = EnsureSource(loopSource);
+        pianoSource = EnsureSource(pianoSource);
+        warningSource = EnsureSource(warningSource);
+        sfxSource = EnsureSource(sfxSource);
+        loopSource = EnsureSource(loopSource);
     }
 
     AudioSource EnsureSource(AudioSource src)
@@ -38,28 +40,40 @@ public class SoundManager : MonoBehaviour
         sfxSource.PlayOneShot(clip, Mathf.Clamp01(volume));
     }
 
-    public void PlayMusic(AudioClip clip)
-    {
-        if (clip == null || musicSource == null) return;
 
-        musicSource.clip = clip;
-        musicSource.loop = true;
-        musicSource.Play();
+    public void PlayWarning(AudioClip clip, float volume = 1f)
+    {
+        if (clip == null || warningSource == null) return;
+
+        warningSource.clip = clip;
+        warningSource.loop = true;
+        warningSource.volume = Mathf.Clamp01(volume);
+        warningSource.Play();
+    }
+
+    public void PlayPiano(AudioClip clip, float volume = 1f)
+    {
+        if (clip == null || pianoSource == null) return;
+
+        pianoSource.clip = clip;
+        pianoSource.loop = true;
+        pianoSource.volume = Mathf.Clamp01(volume);
+        pianoSource.Play();
     }
 
     public void StartLoop(AudioClip clip, float volume = 1f)
     {
-        if (clip == null || loopSource == null) return;
+        if (clip == null || warningSource == null) return;
 
-        loopSource.clip   = clip;
+        loopSource.clip = clip;
         loopSource.volume = Mathf.Clamp01(volume);
-        loopSource.loop   = true;
+        loopSource.loop = true;
         loopSource.Play();
     }
 
     public void StopLoop()
     {
-        if (loopSource == null) return;
         loopSource.Stop();
     }
+
 }
