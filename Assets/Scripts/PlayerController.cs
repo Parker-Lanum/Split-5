@@ -6,14 +6,16 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
+    public GameManager gameManager;
     public enum PlayerState
     {
         Idle,
         Run,
         Jump,
         Fall,
-        //Dash,
-        //Kick,
+        Dash,
+        Slide,
+        Crouch,
         Dead
     }
     [Header("References")]
@@ -21,29 +23,23 @@ public class PlayerController : MonoBehaviour
     public Animator animator;
 
     [Header("Movement")]
-    public float speed = 3f;
-    public float jumpForce = 15f;
+    public float speed = 5f;
+    public float jumpForce = 5f;
 
+    [Header("Ground Check")]
     public LayerMask groundLayer;
 
-
-    /* =======If we have time
+    // =======If we have time
     [Header("Dash")]
     public float dashSpeed = 1;
     public float dashDuration = 1;
     public float dashCooldown = 1;
-
-    [Header("Kick")]
-    public float kickDuration = 1;
-    public float kickCooldown = 1;
-     ======== */
     
     [Header("Audio")]
     public AudioClip[] footstepClips;
     public AudioClip jumpStartClip;
     public AudioClip landClip;
     //public AudioClip dashClip;
-    //public AudioClip kickClip;
 
     [Range(0f, 1f)] public float walkingVolume = 0.5f;
     [Range(0f, 1f)] public float jumpVolume = 0.7f;
@@ -57,12 +53,7 @@ public class PlayerController : MonoBehaviour
     //private int facingDirection = 1;
 
     private bool isGrounded;
-
-    // not using them yet
-    /*private float dashTimer = 0f;
-    private float dashCooldownTimer = 0f;
-    private float kickTimer = 0f;
-    private float kickCooldownTimer = 0f;
+    private bool isCrouched;
 
     private bool wasWalking = false;*/
     void Start()
@@ -77,6 +68,14 @@ public class PlayerController : MonoBehaviour
         UpdateState();
         UpdateAnimator();
         HandleFootstepAudio();
+
+        if (playerBody.linearVelocity.x < 0)
+        {
+            this.transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
+        }else if (playerBody.linearVelocity.x > 0)
+        {
+            this.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+        }
 
         if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
         {
@@ -95,22 +94,44 @@ public class PlayerController : MonoBehaviour
 
         moveDirection = 0;
 
-        if (keyboard.aKey.isPressed)
+        if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed)
         {
             moveDirection -= 1;
         }
 
-        if (keyboard.dKey.isPressed)
+        if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed)
         {
             moveDirection += 1;
         }
+        
+        if (keyboard.sKey.isPressed || keyboard.downArrowKey.isPressed)
+        {
+            isCrouched = true;
+        }
+        else
+        {
+            isCrouched = false;
+        }
 
-        if (keyboard.wKey.wasPressedThisFrame && isGrounded)
+        if ((keyboard.wKey.wasPressedThisFrame || keyboard.upArrowKey.wasPressedThisFrame) && isGrounded)
         {
             Jump();
         }
+        
+        if (keyboard.spaceKey.wasPressedThisFrame && !isGrounded && (currentState != PlayerState.Dash) && Mathf.Abs(playerBody.linearVelocity.x) > 0)
+        {
+            Dash();
+        }
+
     }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Goal"))
+        {
+            gameManager.NextLevel();
+        }
+    }
     void OnCollisionStay2D(Collision2D collision)
     {
         if (IsGroundCollision(collision))
@@ -159,13 +180,13 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        if (!isGrounded && playerBody.linearVelocity.y > 0.05f)
+        else if (isGrounded && isCrouched && Mathf.Abs(playerBody.linearVelocity.x) > 0)
         {
-            currentState = PlayerState.Jump;
+            currentState = PlayerState.Slide;
         }
-        else if (!isGrounded && playerBody.linearVelocity.y < -0.05f)
+        else if (isGrounded && isCrouched)
         {
-            currentState = PlayerState.Fall;
+            currentState = PlayerState.Crouch;
         }
         else if (isGrounded && moveDirection != 0)
         {
@@ -174,6 +195,17 @@ public class PlayerController : MonoBehaviour
         else if (isGrounded && moveDirection == 0)
         {
             currentState = PlayerState.Idle;
+        }
+        else if (currentState != PlayerState.Dash)
+        {
+            if (!isGrounded && playerBody.linearVelocity.y > 0)
+            {
+                currentState = PlayerState.Jump;
+            }
+            else if (!isGrounded && playerBody.linearVelocity.y < 0)
+            {
+                currentState = PlayerState.Fall;
+            }
         }
 
         if (currentState != previousState)
@@ -189,11 +221,13 @@ public class PlayerController : MonoBehaviour
             playerBody.linearVelocity = Vector2.zero;
             return;
         }
-
-        playerBody.linearVelocity = new Vector2(
-            speed * moveDirection,
-            playerBody.linearVelocity.y
-        );
+        if (!(currentState == PlayerState.Dash || currentState == PlayerState.Slide))
+        {
+            playerBody.linearVelocity = new Vector2(
+                speed * moveDirection,
+                playerBody.linearVelocity.y
+            );
+        }
     }
 
     void Jump()
@@ -210,7 +244,23 @@ public class PlayerController : MonoBehaviour
             SoundManager.Instance.PlaySFX(jumpStartClip, jumpVolume);
         }
     }
-    void HandleFootstepAudio()
+
+    void Dash()
+    {
+        playerBody.linearVelocity = new Vector2(
+            2 * playerBody.linearVelocity.x,
+            playerBody.linearVelocity.y
+        );
+
+        currentState = PlayerState.Dash;
+
+        if (SoundManager.Instance != null)
+        {
+            
+        }
+    }
+
+    void OnStateChanged(PlayerState oldState, PlayerState newState)
     {
         bool shouldPlayFootstep =
             isGrounded &&
@@ -290,5 +340,4 @@ public class PlayerController : MonoBehaviour
 
         OnStateChanged(previousState, currentState);
     }
-
 }
