@@ -21,14 +21,11 @@ public class PlayerController : MonoBehaviour
     public Animator animator;
 
     [Header("Movement")]
-    public float speed = 3f;
-    public float jumpForce = 15f;
+    public float speed = 5f;
+    public float jumpForce = 5f;
 
     [Header("Ground Check")]
-    public Transform groundCheck;
-    public float groundCheckRadius = 0.15f;
     public LayerMask groundLayer;
-
 
     // =======If we have time
     [Header("Dash")]
@@ -75,13 +72,12 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         ReadInput();
-        CheckGround();
         UpdateState();
         UpdateAnimator();
 
         if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
         {
-            SceneManager.LoadScene("SampleScene");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
     void FixedUpdate()
@@ -112,19 +108,43 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void CheckGround()
+    void OnCollisionStay2D(Collision2D collision)
     {
-        if (groundCheck == null)
+        if (IsGroundCollision(collision))
+        {
+            isGrounded = true;
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (IsInLayerMask(collision.gameObject.layer, groundLayer))
         {
             isGrounded = false;
-            return;
+        }
+    }
+
+    bool IsGroundCollision(Collision2D collision)
+    {
+        if (!IsInLayerMask(collision.gameObject.layer, groundLayer))
+        {
+            return false;
         }
 
-        isGrounded = Physics2D.OverlapCircle(
-            groundCheck.position,
-            groundCheckRadius,
-            groundLayer
-        );
+        foreach (ContactPoint2D contact in collision.contacts)
+        {
+            if (contact.normal.y > 0.5f)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool IsInLayerMask(int layer, LayerMask layerMask)
+    {
+        return (layerMask.value & (1 << layer)) != 0;
     }
 
     void UpdateState()
@@ -175,6 +195,7 @@ public class PlayerController : MonoBehaviour
 
     void Jump()
     {
+        Debug.Log("JUMP atcavite");
         playerBody.linearVelocity = new Vector2(
             playerBody.linearVelocity.x,
             jumpForce
@@ -230,15 +251,5 @@ public class PlayerController : MonoBehaviour
         }
 
         OnStateChanged(previousState, currentState);
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        if (groundCheck == null) return;
-
-        Gizmos.DrawWireSphere(
-            groundCheck.position,
-            groundCheckRadius
-        );
     }
 }

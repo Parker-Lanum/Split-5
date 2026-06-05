@@ -284,7 +284,7 @@ GameObject:
   - component: {fileID: 6724126597519674494}
   - component: {fileID: 2146345916118570843}
   - component: {fileID: 9042404305421068387}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -455,7 +455,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4058392146847537399}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Platforms
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -682,7 +682,7 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
-  m_AllowMSAA: 1
+  m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
@@ -706,6 +706,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3492431425055269668, guid: b5287d7cbf6568d49a4b37929ea58d25, type: 3}
       propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 3492431425055269668, guid: b5287d7cbf6568d49a4b37929ea58d25, type: 3}
+      propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 8103774044782460231, guid: b5287d7cbf6568d49a4b37929ea58d25, type: 3}
