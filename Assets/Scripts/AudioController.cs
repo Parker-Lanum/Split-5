@@ -8,54 +8,40 @@ public class AudioController : MonoBehaviour
     public AudioClip nuclearWarning;
     public AudioClip piano;
 
-    [Header("Sources")]
-    public AudioSource warningSource;
-    public AudioSource pianoSource;
-
     [Header("Level Volumes")]
-    public float[] warningVolumes = { 1.0f, 0.75f, 0.5f, 0.25f, 0.05f };
+    public float[] warningVolumes = { 1.0f, 0.75f, 0.5f, 0.25f, 0.0f };
     public float[] pianoVolumes = { 0.1f, 0.25f, 0.45f, 0.7f, 1.0f };
 
     void Awake()
     {
         Instance = this;
-
-        if (warningSource == null)
-            warningSource = gameObject.AddComponent<AudioSource>();
-
-        if (pianoSource == null)
-            pianoSource = gameObject.AddComponent<AudioSource>();
-
-        warningSource.playOnAwake = false;
-        pianoSource.playOnAwake = false;
-
-        warningSource.loop = true;
-        pianoSource.loop = true;
     }
 
     void Start()
     {
-        if (nuclearWarning != null)
+        if (SoundManager.Instance == null)
         {
-            warningSource.clip = nuclearWarning;
-            warningSource.Play();
+            Debug.LogWarning("AudioController: No SoundManager found in scene.");
+            return;
         }
 
-        if (piano != null)
-        {
-            pianoSource.clip = piano;
-            pianoSource.Play();
-        }
+        SoundManager.Instance.PlayWarning(nuclearWarning, warningVolumes[0]);
+        SoundManager.Instance.PlayPiano(piano, pianoVolumes[0]);
 
         SetLevelAudio(0);
     }
 
     public void SetLevelAudio(int levelIndex)
     {
-        levelIndex = Mathf.Clamp(levelIndex, 0, warningVolumes.Length - 1);
+        if (SoundManager.Instance == null) return;
 
-        warningSource.volume = warningVolumes[levelIndex];
-        pianoSource.volume = pianoVolumes[levelIndex];
+        int maxIndex = Mathf.Min(warningVolumes.Length, pianoVolumes.Length) - 1;
+        if (maxIndex < 0) return;
+
+        levelIndex = Mathf.Clamp(levelIndex, 0, maxIndex);
+
+        SoundManager.Instance.SetWarningVolume(warningVolumes[levelIndex]);
+        SoundManager.Instance.SetPianoVolume(pianoVolumes[levelIndex]);
     }
 }
 

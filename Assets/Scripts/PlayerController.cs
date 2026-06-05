@@ -36,24 +36,26 @@ public class PlayerController : MonoBehaviour
     public float dashCooldown = 1;
     
     [Header("Audio")]
-    public AudioClip walkingClip;
-    public AudioClip jumpClip;
+    public AudioClip[] footstepClips;
+    public AudioClip jumpStartClip;
+    public AudioClip landClip;
     //public AudioClip dashClip;
 
-    [Range(0f, 1f)] public float walkingVolume = 0.1f;
+    [Range(0f, 1f)] public float walkingVolume = 0.5f;
     [Range(0f, 1f)] public float jumpVolume = 0.7f;
+    [Range(0f, 2f)] public float landVolume = 1.0f;
     //[Range(0f, 1f)] public float actionVolume = 0.7f;
 
     private PlayerState currentState = PlayerState.Idle;
     private PlayerState previousState = PlayerState.Idle;
 
     private int moveDirection = 0;
-    private int facingDirection = 1;
+    //private int facingDirection = 1;
 
     private bool isGrounded;
     private bool isCrouched;
 
-    private bool wasWalking = false;
+    private bool wasWalking = false;*/
     void Start()
     {
         
@@ -65,6 +67,7 @@ public class PlayerController : MonoBehaviour
         ReadInput();
         UpdateState();
         UpdateAnimator();
+        HandleFootstepAudio();
 
         if (playerBody.linearVelocity.x < 0)
         {
@@ -238,7 +241,7 @@ public class PlayerController : MonoBehaviour
 
         if (SoundManager.Instance != null)
         {
-            SoundManager.Instance.PlaySFX(jumpClip, jumpVolume);
+            SoundManager.Instance.PlaySFX(jumpStartClip, jumpVolume);
         }
     }
 
@@ -259,19 +262,56 @@ public class PlayerController : MonoBehaviour
 
     void OnStateChanged(PlayerState oldState, PlayerState newState)
     {
-        if (oldState == PlayerState.Run && newState != PlayerState.Run)
+        bool shouldPlayFootstep =
+            isGrounded &&
+            moveDirection != 0 &&
+            currentState == PlayerState.Run;
+
+        if (!shouldPlayFootstep)
         {
             if (SoundManager.Instance != null)
             {
-                SoundManager.Instance.StopLoop();
+                return;
             }
+
+            return;
         }
 
-        if (newState == PlayerState.Run)
+        if (SoundManager.Instance == null) return;
+
+        if (!SoundManager.Instance.IsFootstepPlaying())
+        {
+            PlayRandomFootstep();
+        }
+    }
+
+    void PlayRandomFootstep()
+    {
+        if (footstepClips == null || footstepClips.Length == 0) return;
+        if (SoundManager.Instance == null) return;
+
+        int index = Random.Range(0, footstepClips.Length);
+        AudioClip clip = footstepClips[index];
+
+        SoundManager.Instance.PlayFootstep(clip, walkingVolume);
+    }
+
+    void OnStateChanged(PlayerState oldState, PlayerState newState)
+    {
+
+        bool wasInAir = 
+            oldState == PlayerState.Jump ||
+            oldState == PlayerState.Fall;
+
+        bool landed =
+            newState == PlayerState.Idle ||
+            newState == PlayerState.Run;
+
+        if (wasInAir && landed)
         {
             if (SoundManager.Instance != null)
             {
-                SoundManager.Instance.StartLoop(walkingClip, walkingVolume);
+                SoundManager.Instance.PlaySFX(landClip, landVolume);
             }
         }
 
@@ -295,7 +335,7 @@ public class PlayerController : MonoBehaviour
 
         if (SoundManager.Instance != null)
         {
-            SoundManager.Instance.StopLoop();
+            SoundManager.Instance.StopFootstep();
         }
 
         OnStateChanged(previousState, currentState);

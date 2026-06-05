@@ -1,2 +1,16 @@
 fileFormatVersion: 2
 guid: 14401ef1e7933cf4da982b4c5beaecee
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - playerBody: {instanceID: 0}
+  - animator: {instanceID: 0}
+  - groundCheck: {instanceID: 0}
+  - jumpStartClip: {instanceID: 0}
+  - landClip: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
