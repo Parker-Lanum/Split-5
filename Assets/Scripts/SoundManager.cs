@@ -6,6 +6,8 @@ public class SoundManager : MonoBehaviour
 
     [Header("Audio Sources (auto-created if left empty)")]
     public AudioSource musicSource;
+    public AudioSource warningSource;
+    public AudioSource pianoSource;
     public AudioSource sfxSource;
 
     void Awake()
@@ -19,6 +21,8 @@ public class SoundManager : MonoBehaviour
         Instance = this;
 
         musicSource = EnsureSource(musicSource);
+        pianoSource = EnsureSource(pianoSource);
+        warningSource = EnsureSource(warningSource);
         sfxSource   = EnsureSource(sfxSource);
     }
 
@@ -36,13 +40,35 @@ public class SoundManager : MonoBehaviour
         sfxSource.PlayOneShot(clip, Mathf.Clamp01(volume));
     }
 
+<<<<<<< Updated upstream
     public void PlayMusic(AudioClip clip, float volume = 1f)
+=======
+    public void PlayWarning(AudioClip clip, float volume = 1f)
+>>>>>>> Stashed changes
     {
         if (clip == null || musicSource == null) return;
+        if (clip == null || warningSource == null) return;
 
+<<<<<<< Updated upstream
         musicSource.clip = clip;
         musicSource.loop = true;
         musicSource.volume = volume;
         musicSource.Play();
+=======
+        warningSource.clip = clip;
+        warningSource.loop = true;
+        warningSource.volume = volume;
+        warningSource.Play();
+    }
+
+    public void PlayPiano(AudioClip clip, float volume = 1f)
+    {
+        if (clip == null || pianoSource == null) return;
+
+        pianoSource.clip = clip;
+        pianoSource.loop = true;
+        pianoSource.volume = volume;
+        pianoSource.Play();
+>>>>>>> Stashed changes
     }
 }

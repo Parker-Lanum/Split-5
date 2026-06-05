@@ -2,25 +2,60 @@ using UnityEngine;
 
 public class AudioController : MonoBehaviour
 {
-    [Header("Music")]
+    public static AudioController Instance { get; private set; }
+
+    [Header("Clips")]
     public AudioClip nuclearWarning;
     public AudioClip piano;
 
-    [Header("Player")]
-    public AudioClip walking;
-    //public AudioClip jumping;
+    [Header("Sources")]
+    public AudioSource warningSource;
+    public AudioSource pianoSource;
 
-    [Header("Volumes")]
-    [Range(0f, 1f)] public float warningVolume = 1.0f;
-    [Range(0f, 1f)] public float pianoVolume = 0.1f;
-    [Range(0f, 1f)] public float playerVolume = 1.0f
+    [Header("Level Volumes")]
+    public float[] warningVolumes = { 1.0f, 0.75f, 0.5f, 0.25f, 0.05f };
+    public float[] pianoVolumes = { 0.1f, 0.25f, 0.45f, 0.7f, 1.0f };
+
+    void Awake()
+    {
+        Instance = this;
+
+        if (warningSource == null)
+            warningSource = gameObject.AddComponent<AudioSource>();
+
+        if (pianoSource == null)
+            pianoSource = gameObject.AddComponent<AudioSource>();
+
+        warningSource.playOnAwake = false;
+        pianoSource.playOnAwake = false;
+
+        warningSource.loop = true;
+        pianoSource.loop = true;
+    }
 
     void Start()
     {
-        if (nuclearWarning != null) SoundManager.Instance.PlayMusic(nuclearWarning, warningVolume);
-        if (piano != null) SoundManager.Instance.PlayMusic(piano, pianoVolume);
+        if (nuclearWarning != null)
+        {
+            warningSource.clip = nuclearWarning;
+            warningSource.Play();
+        }
+
+        if (piano != null)
+        {
+            pianoSource.clip = piano;
+            pianoSource.Play();
+        }
+
+        SetLevelAudio(0);
     }
 
-    
+    public void SetLevelAudio(int levelIndex)
+    {
+        levelIndex = Mathf.Clamp(levelIndex, 0, warningVolumes.Length - 1);
+
+        warningSource.volume = warningVolumes[levelIndex];
+        pianoSource.volume = pianoVolumes[levelIndex];
+    }
 }
 
