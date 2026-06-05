@@ -8,7 +8,7 @@ public class SoundManager : MonoBehaviour
     public AudioSource warningSource;
     public AudioSource pianoSource;
     public AudioSource sfxSource;
-    public AudioSource loopSource;
+    public AudioSource footstepSource;
 
     void Awake()
     {
@@ -23,21 +23,21 @@ public class SoundManager : MonoBehaviour
         pianoSource = EnsureSource(pianoSource);
         warningSource = EnsureSource(warningSource);
         sfxSource = EnsureSource(sfxSource);
-        loopSource = EnsureSource(loopSource);
+        footstepSource = EnsureSource(footstepSource);
     }
 
     AudioSource EnsureSource(AudioSource src)
     {
         if (src == null) src = gameObject.AddComponent<AudioSource>();
         src.playOnAwake  = false;
-        src.spatialBlend = 0f;   // 2D - not attenuated by distance from the listener
+        src.spatialBlend = 0f;
         return src;
     }
 
     public void PlaySFX(AudioClip clip, float volume = 1f)
     {
         if (clip == null || sfxSource == null) return;
-        sfxSource.PlayOneShot(clip, Mathf.Clamp01(volume));
+        sfxSource.PlayOneShot(clip, Mathf.Clamp(volume, 0f, 2f));
     }
 
 
@@ -61,19 +61,37 @@ public class SoundManager : MonoBehaviour
         pianoSource.Play();
     }
 
-    public void StartLoop(AudioClip clip, float volume = 1f)
+    public void PlayFootstep(AudioClip clip, float volume = 1f)
     {
-        if (clip == null || warningSource == null) return;
+        if (clip == null || footstepSource == null) return;
 
-        loopSource.clip = clip;
-        loopSource.volume = Mathf.Clamp01(volume);
-        loopSource.loop = true;
-        loopSource.Play();
+        footstepSource.clip = clip;
+        footstepSource.volume = Mathf.Clamp01(volume);
+        footstepSource.loop = false;
+        footstepSource.Play();
     }
 
-    public void StopLoop()
+    public void SetWarningVolume(float volume)
     {
-        loopSource.Stop();
+        if (warningSource == null) return;
+        warningSource.volume = Mathf.Clamp01(volume);
+    }
+
+    public void SetPianoVolume(float volume)
+    {
+        if (pianoSource == null) return;
+        pianoSource.volume = Mathf.Clamp01(volume);
+    }
+
+    public void StopFootstep()
+    {
+        if (footstepSource == null) return;
+        footstepSource.Stop();
+    }
+
+    public bool IsFootstepPlaying()
+    {
+        return footstepSource != null && footstepSource.isPlaying;
     }
 
 }

@@ -12,8 +12,8 @@ public class PlayerController : MonoBehaviour
         Run,
         Jump,
         Fall,
-        Dash,
-        Kick,
+        //Dash,
+        //Kick,
         Dead
     }
     [Header("References")]
@@ -24,13 +24,10 @@ public class PlayerController : MonoBehaviour
     public float speed = 3f;
     public float jumpForce = 15f;
 
-    [Header("Ground Check")]
-    public Transform groundCheck;
-    public float groundCheckRadius = 0.15f;
     public LayerMask groundLayer;
 
 
-    // =======If we have time
+    /* =======If we have time
     [Header("Dash")]
     public float dashSpeed = 1;
     public float dashDuration = 1;
@@ -39,33 +36,35 @@ public class PlayerController : MonoBehaviour
     [Header("Kick")]
     public float kickDuration = 1;
     public float kickCooldown = 1;
-    // ========
+     ======== */
     
     [Header("Audio")]
-    public AudioClip walkingClip;
-    public AudioClip jumpClip;
+    public AudioClip[] footstepClips;
+    public AudioClip jumpStartClip;
+    public AudioClip landClip;
     //public AudioClip dashClip;
     //public AudioClip kickClip;
 
-    [Range(0f, 1f)] public float walkingVolume = 0.1f;
+    [Range(0f, 1f)] public float walkingVolume = 0.5f;
     [Range(0f, 1f)] public float jumpVolume = 0.7f;
+    [Range(0f, 2f)] public float landVolume = 1.0f;
     //[Range(0f, 1f)] public float actionVolume = 0.7f;
 
     private PlayerState currentState = PlayerState.Idle;
     private PlayerState previousState = PlayerState.Idle;
 
     private int moveDirection = 0;
-    private int facingDirection = 1;
+    //private int facingDirection = 1;
 
     private bool isGrounded;
 
     // not using them yet
-    private float dashTimer = 0f;
+    /*private float dashTimer = 0f;
     private float dashCooldownTimer = 0f;
     private float kickTimer = 0f;
     private float kickCooldownTimer = 0f;
 
-    private bool wasWalking = false;
+    private bool wasWalking = false;*/
     void Start()
     {
         
@@ -75,13 +74,13 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         ReadInput();
-        CheckGround();
         UpdateState();
         UpdateAnimator();
+        HandleFootstepAudio();
 
         if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
         {
-            SceneManager.LoadScene("SampleScene");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
     void FixedUpdate()
@@ -112,19 +111,43 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void CheckGround()
+    void OnCollisionStay2D(Collision2D collision)
     {
-        if (groundCheck == null)
+        if (IsGroundCollision(collision))
+        {
+            isGrounded = true;
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (IsInLayerMask(collision.gameObject.layer, groundLayer))
         {
             isGrounded = false;
-            return;
+        }
+    }
+
+    bool IsGroundCollision(Collision2D collision)
+    {
+        if (!IsInLayerMask(collision.gameObject.layer, groundLayer))
+        {
+            return false;
         }
 
-        isGrounded = Physics2D.OverlapCircle(
-            groundCheck.position,
-            groundCheckRadius,
-            groundLayer
-        );
+        foreach (ContactPoint2D contact in collision.contacts)
+        {
+            if (contact.normal.y > 0.5f)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool IsInLayerMask(int layer, LayerMask layerMask)
+    {
+        return (layerMask.value & (1 << layer)) != 0;
     }
 
     void UpdateState()
@@ -184,25 +207,61 @@ public class PlayerController : MonoBehaviour
 
         if (SoundManager.Instance != null)
         {
-            SoundManager.Instance.PlaySFX(jumpClip, jumpVolume);
+            SoundManager.Instance.PlaySFX(jumpStartClip, jumpVolume);
         }
+    }
+    void HandleFootstepAudio()
+    {
+        bool shouldPlayFootstep =
+            isGrounded &&
+            moveDirection != 0 &&
+            currentState == PlayerState.Run;
+
+        if (!shouldPlayFootstep)
+        {
+            if (SoundManager.Instance != null)
+            {
+                return;
+            }
+
+            return;
+        }
+
+        if (SoundManager.Instance == null) return;
+
+        if (!SoundManager.Instance.IsFootstepPlaying())
+        {
+            PlayRandomFootstep();
+        }
+    }
+
+    void PlayRandomFootstep()
+    {
+        if (footstepClips == null || footstepClips.Length == 0) return;
+        if (SoundManager.Instance == null) return;
+
+        int index = Random.Range(0, footstepClips.Length);
+        AudioClip clip = footstepClips[index];
+
+        SoundManager.Instance.PlayFootstep(clip, walkingVolume);
     }
 
     void OnStateChanged(PlayerState oldState, PlayerState newState)
     {
-        if (oldState == PlayerState.Run && newState != PlayerState.Run)
-        {
-            if (SoundManager.Instance != null)
-            {
-                SoundManager.Instance.StopLoop();
-            }
-        }
 
-        if (newState == PlayerState.Run)
+        bool wasInAir = 
+            oldState == PlayerState.Jump ||
+            oldState == PlayerState.Fall;
+
+        bool landed =
+            newState == PlayerState.Idle ||
+            newState == PlayerState.Run;
+
+        if (wasInAir && landed)
         {
             if (SoundManager.Instance != null)
             {
-                SoundManager.Instance.StartLoop(walkingClip, walkingVolume);
+                SoundManager.Instance.PlaySFX(landClip, landVolume);
             }
         }
 
@@ -226,19 +285,10 @@ public class PlayerController : MonoBehaviour
 
         if (SoundManager.Instance != null)
         {
-            SoundManager.Instance.StopLoop();
+            SoundManager.Instance.StopFootstep();
         }
 
         OnStateChanged(previousState, currentState);
     }
 
-    void OnDrawGizmosSelected()
-    {
-        if (groundCheck == null) return;
-
-        Gizmos.DrawWireSphere(
-            groundCheck.position,
-            groundCheckRadius
-        );
-    }
 }

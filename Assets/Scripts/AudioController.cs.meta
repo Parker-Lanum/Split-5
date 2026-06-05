@@ -1,2 +1,15 @@
 fileFormatVersion: 2
 guid: 99fe00a0d4f9e0f49b0ca6b2925b0dee
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - nuclearWarning: {fileID: 8300000, guid: f09499f4c48dc9644b5ab428881c12b7, type: 3}
+  - piano: {fileID: 8300000, guid: 16cce3c11c4da0b49b3ff20952bd7a57, type: 3}
+  - warningSource: {instanceID: 0}
+  - pianoSource: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
