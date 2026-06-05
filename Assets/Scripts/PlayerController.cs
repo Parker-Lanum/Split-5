@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
+    public GameManager gameManager;
     public enum PlayerState
     {
         Idle,
@@ -108,6 +109,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Goal"))
+        {
+            gameManager.NextLevel();
+        }
+    }
     void OnCollisionStay2D(Collision2D collision)
     {
         if (IsGroundCollision(collision))
