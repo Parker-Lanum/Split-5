@@ -50,6 +50,7 @@ public class GameManager : MonoBehaviour
             print(currLevelIndex);
             levels[currLevelIndex].SetActive(true);
             levelsCompleted ++;
+            AudioController.Instance.SetLevelAudio(levelsCompleted - 1);  
             levelText.text = string.Format("Level: {0}", levelsCompleted);
         }
     }

@@ -259,7 +259,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void HandleFootstepAudio(PlayerState oldState, PlayerState newState)
+    void HandleFootstepAudio()
     {
         bool shouldPlayFootstep =
             isGrounded &&
