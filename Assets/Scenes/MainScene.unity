@@ -398,6 +398,10 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 323467512497456900, guid: b5287d7cbf6568d49a4b37929ea58d25, type: 3}
+      propertyPath: dashClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 6ee174c43ef5f7646baa5ac7d94ffa1c, type: 3}
+    - target: {fileID: 323467512497456900, guid: b5287d7cbf6568d49a4b37929ea58d25, type: 3}
       propertyPath: landClip
       value: 
       objectReference: {fileID: 8300000, guid: ae9abcfa1b0215044b5ebcbf2eb679b0, type: 3}
@@ -696,6 +700,10 @@ PrefabInstance:
       value: 4.5
       objectReference: {fileID: 0}
     - target: {fileID: 5739695422382452997, guid: a8aa64a1d31dba648aa8959ec761ebeb, type: 3}
+      propertyPath: dashClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 6ee174c43ef5f7646baa5ac7d94ffa1c, type: 3}
+    - target: {fileID: 5739695422382452997, guid: a8aa64a1d31dba648aa8959ec761ebeb, type: 3}
       propertyPath: landClip
       value: 
       objectReference: {fileID: 8300000, guid: ae9abcfa1b0215044b5ebcbf2eb679b0, type: 3}
@@ -977,6 +985,10 @@ PrefabInstance:
       propertyPath: 'levels.Array.data[2]'
       value: 
       objectReference: {fileID: 642514962}
+    - target: {fileID: 5739695422382452997, guid: a8aa64a1d31dba648aa8959ec761ebeb, type: 3}
+      propertyPath: dashClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 6ee174c43ef5f7646baa5ac7d94ffa1c, type: 3}
     - target: {fileID: 5739695422382452997, guid: a8aa64a1d31dba648aa8959ec761ebeb, type: 3}
       propertyPath: landClip
       value: 
@@ -1378,6 +1390,10 @@ PrefabInstance:
       propertyPath: 'levels.Array.data[2]'
       value: 
       objectReference: {fileID: 642514962}
+    - target: {fileID: 5739695422382452997, guid: a8aa64a1d31dba648aa8959ec761ebeb, type: 3}
+      propertyPath: dashClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 6ee174c43ef5f7646baa5ac7d94ffa1c, type: 3}
     - target: {fileID: 5739695422382452997, guid: a8aa64a1d31dba648aa8959ec761ebeb, type: 3}
       propertyPath: landClip
       value: 
@@ -1934,6 +1950,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 396695051}
     - target: {fileID: 5739695422382452997, guid: a8aa64a1d31dba648aa8959ec761ebeb, type: 3}
+      propertyPath: dashClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 6ee174c43ef5f7646baa5ac7d94ffa1c, type: 3}
+    - target: {fileID: 5739695422382452997, guid: a8aa64a1d31dba648aa8959ec761ebeb, type: 3}
       propertyPath: landClip
       value: 
       objectReference: {fileID: 8300000, guid: ae9abcfa1b0215044b5ebcbf2eb679b0, type: 3}
@@ -2446,6 +2466,10 @@ PrefabInstance:
       propertyPath: 'levels.Array.data[2]'
       value: 
       objectReference: {fileID: 1149177557}
+    - target: {fileID: 5739695422382452997, guid: a8aa64a1d31dba648aa8959ec761ebeb, type: 3}
+      propertyPath: dashClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 6ee174c43ef5f7646baa5ac7d94ffa1c, type: 3}
     - target: {fileID: 5739695422382452997, guid: a8aa64a1d31dba648aa8959ec761ebeb, type: 3}
       propertyPath: landClip
       value: 
@@ -3304,6 +3328,10 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 323467512497456900, guid: b5287d7cbf6568d49a4b37929ea58d25, type: 3}
+      propertyPath: dashClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 6ee174c43ef5f7646baa5ac7d94ffa1c, type: 3}
+    - target: {fileID: 323467512497456900, guid: b5287d7cbf6568d49a4b37929ea58d25, type: 3}
       propertyPath: landClip
       value: 
       objectReference: {fileID: 8300000, guid: ae9abcfa1b0215044b5ebcbf2eb679b0, type: 3}
@@ -3953,6 +3981,10 @@ PrefabInstance:
       value: 4.5
       objectReference: {fileID: 0}
     - target: {fileID: 5739695422382452997, guid: a8aa64a1d31dba648aa8959ec761ebeb, type: 3}
+      propertyPath: dashClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 6ee174c43ef5f7646baa5ac7d94ffa1c, type: 3}
+    - target: {fileID: 5739695422382452997, guid: a8aa64a1d31dba648aa8959ec761ebeb, type: 3}
       propertyPath: landClip
       value: 
       objectReference: {fileID: 8300000, guid: ae9abcfa1b0215044b5ebcbf2eb679b0, type: 3}
@@ -4342,6 +4374,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1371265954}
     - target: {fileID: 5739695422382452997, guid: a8aa64a1d31dba648aa8959ec761ebeb, type: 3}
+      propertyPath: dashClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 6ee174c43ef5f7646baa5ac7d94ffa1c, type: 3}
+    - target: {fileID: 5739695422382452997, guid: a8aa64a1d31dba648aa8959ec761ebeb, type: 3}
       propertyPath: landClip
       value: 
       objectReference: {fileID: 8300000, guid: ae9abcfa1b0215044b5ebcbf2eb679b0, type: 3}
@@ -4471,6 +4507,10 @@ PrefabInstance:
       propertyPath: speed
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 323467512497456900, guid: b5287d7cbf6568d49a4b37929ea58d25, type: 3}
+      propertyPath: dashClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 6ee174c43ef5f7646baa5ac7d94ffa1c, type: 3}
     - target: {fileID: 323467512497456900, guid: b5287d7cbf6568d49a4b37929ea58d25, type: 3}
       propertyPath: landClip
       value: 
@@ -5386,6 +5426,10 @@ PrefabInstance:
       propertyPath: 'levels.Array.data[2]'
       value: 
       objectReference: {fileID: 642514962}
+    - target: {fileID: 5739695422382452997, guid: a8aa64a1d31dba648aa8959ec761ebeb, type: 3}
+      propertyPath: dashClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 6ee174c43ef5f7646baa5ac7d94ffa1c, type: 3}
     - target: {fileID: 5739695422382452997, guid: a8aa64a1d31dba648aa8959ec761ebeb, type: 3}
       propertyPath: landClip
       value: 

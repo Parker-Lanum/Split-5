@@ -41,12 +41,12 @@ public class PlayerController : MonoBehaviour
     public AudioClip[] footstepClips;
     public AudioClip jumpStartClip;
     public AudioClip landClip;
-    //public AudioClip dashClip;
+    public AudioClip dashClip;
 
     [Range(0f, 1f)] public float walkingVolume = 0.5f;
     [Range(0f, 1f)] public float jumpVolume = 0.7f;
     [Range(0f, 2f)] public float landVolume = 1.0f;
-    //[Range(0f, 1f)] public float actionVolume = 0.7f;
+    [Range(0f, 1f)] public float dashVolume = 0.8f;
 
     private PlayerState currentState = PlayerState.Idle;
     private PlayerState previousState = PlayerState.Idle;
@@ -319,6 +319,11 @@ public class PlayerController : MonoBehaviour
             dashDirection * dashSpeed,
             playerBody.linearVelocity.y
         );
+
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFX(dashClip, dashVolume);
+        }
     }
 
     void HandleFootstepAudio()
