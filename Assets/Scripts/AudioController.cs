@@ -9,8 +9,35 @@ public class AudioController : MonoBehaviour
     public AudioClip piano;
 
     [Header("Level Volumes")]
-    public float[] warningVolumes = { 1.0f, 0.75f, 0.5f, 0.25f, 0.0f };
-    public float[] pianoVolumes = { 0.1f, 0.25f, 0.45f, 0.7f, 1.0f };
+    public float[] warningVolumes =
+{
+    0.90f, // Level 1
+    0.70f,
+    0.55f,
+    0.45f,
+    0.30f,
+    0.20f,
+    0.10f,
+    0.05f,
+    0.03f,
+    0.01f,
+    0.00f  // Level 11
+};
+
+    public float[] pianoVolumes =
+    {
+    0.10f, // Level 1
+    0.25f,
+    0.40f,
+    0.50f,
+    0.60f,
+    0.70f,
+    0.80f,
+    0.85f,
+    0.90f,
+    0.95f,
+    1.00f  // Level 11
+};
 
     void Awake()
     {

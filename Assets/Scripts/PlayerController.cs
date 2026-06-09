@@ -31,10 +31,12 @@ public class PlayerController : MonoBehaviour
 
     // =======If we have time
     [Header("Dash")]
-    public float dashSpeed = 1;
-    public float dashDuration = 1;
-    public float dashCooldown = 1;
-    
+    public float dashSpeed = 15;
+    public float dashDuration = 0.18f;
+    public float dashCooldown = 0.5f;
+    public float dashTimer = 0f;
+    private float dashCooldownTimer = 0f;
+
     [Header("Audio")]
     public AudioClip[] footstepClips;
     public AudioClip jumpStartClip;
@@ -51,6 +53,7 @@ public class PlayerController : MonoBehaviour
 
     private int moveDirection = 0;
     //private int facingDirection = 1;
+    private int dashDirection = 0;
 
     private bool isGrounded;
     private bool isCrouched;
@@ -80,6 +83,11 @@ public class PlayerController : MonoBehaviour
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+
+        if (dashCooldownTimer > 0f)
+        {
+            dashCooldownTimer -= Time.deltaTime;
+        }
     }
     void FixedUpdate()
     {
@@ -95,12 +103,12 @@ public class PlayerController : MonoBehaviour
 
         if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed)
         {
-            moveDirection -= 1;
+            moveDirection = -1;
         }
 
         if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed)
         {
-            moveDirection += 1;
+            moveDirection = 1;
         }
         
         if (keyboard.sKey.isPressed || keyboard.downArrowKey.isPressed)
@@ -116,14 +124,20 @@ public class PlayerController : MonoBehaviour
         {
             Jump();
         }
-        
-        if (keyboard.spaceKey.wasPressedThisFrame && !isGrounded && (currentState != PlayerState.Dash) && Mathf.Abs(playerBody.linearVelocity.x) > 0)
+
+        if (keyboard.spaceKey.wasPressedThisFrame && CanDash())
         {
             Dash();
         }
 
     }
-
+    bool CanDash()
+    {
+        return currentState != PlayerState.Dead
+            && currentState != PlayerState.Dash
+            && dashCooldownTimer <= 0f
+            && moveDirection != 0;
+    }
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Goal"))
@@ -133,6 +147,11 @@ public class PlayerController : MonoBehaviour
     }
     void OnCollisionStay2D(Collision2D collision)
     {
+        if (playerBody.linearVelocity.y > 0.05f)
+        {
+            return;
+        }
+
         if (IsGroundCollision(collision))
         {
             isGrounded = true;
@@ -173,11 +192,41 @@ public class PlayerController : MonoBehaviour
     void UpdateState()
     {
         previousState = currentState;
+        if (currentState == PlayerState.Dash)
+        {
+            dashTimer -= Time.deltaTime;
+
+            if (dashTimer <= 0f)
+            {
+                if (!isGrounded)
+                {
+                    currentState = playerBody.linearVelocity.y > 0f
+                        ? PlayerState.Jump
+                        : PlayerState.Fall;
+                }
+                else if (moveDirection != 0)
+                {
+                    currentState = PlayerState.Run;
+                }
+                else
+                {
+                    currentState = PlayerState.Idle;
+                }
+            }
+
+            if (currentState != previousState)
+            {
+                OnStateChanged(previousState, currentState);
+            }
+
+            return;
+        }
 
         if (currentState == PlayerState.Dead)
         {
             return;
         }
+
 
         else if (isGrounded && isCrouched && Mathf.Abs(playerBody.linearVelocity.x) > 0)
         {
@@ -220,17 +269,31 @@ public class PlayerController : MonoBehaviour
             playerBody.linearVelocity = Vector2.zero;
             return;
         }
-        if (!(currentState == PlayerState.Dash || currentState == PlayerState.Slide))
+
+        if (currentState == PlayerState.Dash)
         {
             playerBody.linearVelocity = new Vector2(
-                speed * moveDirection,
+                dashDirection * dashSpeed,
                 playerBody.linearVelocity.y
             );
+            return;
         }
+
+        if (currentState == PlayerState.Slide)
+        {
+            return;
+        }
+
+        playerBody.linearVelocity = new Vector2(
+            speed * moveDirection,
+            playerBody.linearVelocity.y
+        );
     }
 
     void Jump()
     {
+        isGrounded = false;
+
         playerBody.linearVelocity = new Vector2(
             playerBody.linearVelocity.x,
             jumpForce
@@ -246,17 +309,16 @@ public class PlayerController : MonoBehaviour
 
     void Dash()
     {
-        playerBody.linearVelocity = new Vector2(
-            2 * playerBody.linearVelocity.x,
-            playerBody.linearVelocity.y
-        );
+        dashDirection = moveDirection;
 
         currentState = PlayerState.Dash;
+        dashTimer = dashDuration;
+        dashCooldownTimer = dashCooldown;
 
-        if (SoundManager.Instance != null)
-        {
-            
-        }
+        playerBody.linearVelocity = new Vector2(
+            dashDirection * dashSpeed,
+            playerBody.linearVelocity.y
+        );
     }
 
     void HandleFootstepAudio()
@@ -304,7 +366,9 @@ public class PlayerController : MonoBehaviour
 
         bool landed =
             newState == PlayerState.Idle ||
-            newState == PlayerState.Run;
+            newState == PlayerState.Run ||
+            newState == PlayerState.Crouch ||
+            newState == PlayerState.Slide;
 
         if (wasInAir && landed)
         {
